@@ -16,11 +16,11 @@ async def stats_handler(client: Client, message: Message):
     total_chats = len(chat_data["chats"]) if "chats" in chat_data else 0
 
     text = (
-        "**Bot Stats:**\n\n"
-        f"**Total Users:** `{total_users}`\n"
-        f"**Total Chats:** `{total_chats}`\n"
-        f"**New Users (24 hrs):** `{new_users}`\n"
-        f"**New Chats (24 hrs):** `{new_chats}`"
+        "**Bᴏᴛ Sᴛᴀᴛs::**\n\n"
+        f"**Tᴏᴛᴀʟ Usᴇʀs:** `{total_users}`\n"
+        f"**Tᴏᴛᴀʟ Cʜᴀᴛs:** `{total_chats}`\n"
+        f"**Nᴇᴡ Usᴇʀs (𝟸𝟺 ʜʀs):** `{new_users}`\n"
+        f"**Nᴇᴡ Cʜᴀᴛs(𝟸𝟺 ʜʀs):** `{new_chats}`"
     )
 
     keyboard = InlineKeyboardMarkup([
