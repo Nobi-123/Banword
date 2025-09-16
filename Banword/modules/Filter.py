@@ -1,7 +1,7 @@
 import re
 import asyncio
 from pyrogram import filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from Banword import app
 from config import OTHER_LOGS, BOT_USERNAME
 from Banword.helper.authdb import get_auth_users
@@ -28,19 +28,25 @@ BAD_PATTERN = re.compile(r"|".join([re.escape(word) for word in BAD_WORDS]), re.
 # Message filter
 # -------------------
 @app.on_message(filters.group & filters.text & ~filters.via_bot)
-async def filter_18(client, message: Message):
+async def filter_18(client, message):
     text = message.text or ""
-    if not BAD_PATTERN.search(text):
-        return
-
     user = message.from_user
     if not user:
         return
 
-    # Check if user is authorized in this group
+    # Skip if user is a group admin or creator
+    member = await message.chat.get_member(user.id)
+    if member.status in ("administrator", "creator"):
+        return
+
+    # Skip if user is authorized in this group
     auth_users = await get_auth_users(message.chat.id)
     if user.id in auth_users:
-        return  # skip deletion
+        return
+
+    # Check for bad words
+    if not BAD_PATTERN.search(text):
+        return
 
     # Delete the message
     try:
