@@ -3,7 +3,7 @@ import psutil
 import platform
 from pyrogram import filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from Banword import Banword as app
+from Banword import app
 from config import OWNER_ID
 
 # Import your user/chat count functions
