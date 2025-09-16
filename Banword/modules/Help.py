@@ -1,6 +1,6 @@
 from pyrogram import filters
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
-from Banword import Banword as app
+from Banword import app
 
 # Show Help Menu
 @app.on_callback_query(filters.regex("^show_help$"))
