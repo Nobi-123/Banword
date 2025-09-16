@@ -1,11 +1,9 @@
-# modules/auth.py
-
 from pyrogram import filters
 from Banword import app
-from config import OWNER_ID
-from helper.authdb import add_auth_user, is_authorized, get_auth_users
+from helper.authdb import add_auth_user, get_auth_users
 
-@app.on_message(filters.command("auth") & filters.user(OWNER_ID))
+# /auth → authorize a user in this group
+@app.on_message(filters.command("auth") & filters.group & filters.admins)
 async def authorize_user(client, message):
     user_id = None
 
@@ -34,9 +32,10 @@ async def authorize_user(client, message):
         await message.reply_text(f"✅ Authorized user `{user_id}` in this group")
     else:
         await message.reply_text(f"⚠️ User `{user_id}` is already authorized here.")
-        
 
-@app.on_message(filters.command("authusers") & filters.group)
+
+# /authusers → list authorized users in this group
+@app.on_message(filters.command("authusers") & filters.group & filters.admins)
 async def list_auth_users(client, message):
     users = await get_auth_users(message.chat.id)
 
