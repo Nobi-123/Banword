@@ -1,98 +1,77 @@
-# modules/auth.py
-#
-# Commands for managing authorized users in groups.
-# Only group admins can use these commands.
-
 from pyrogram import filters
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from Banword import app
 from Banword.helper.authdb import add_auth_user, remove_auth_user, get_auth_users
 
-# -----------------------------
-# /auth → authorize a user
-# -----------------------------
-@app.on_message(filters.command("auth") & filters.group & filters.admins)
-async def authorize_user(client, message):
-    user_id = None
+# -------------------
+# Custom admin filter
+# -------------------
+def admin_only():
+    async def filter_func(_, __, message: Message):
+        if not message.from_user:
+            return False
+        member = await message.chat.get_member(message.from_user.id)
+        return member.status in ("administrator", "creator")
+    return filters.create(filter_func)
 
-    # Case 1: reply to user
-    if message.reply_to_message and message.reply_to_message.from_user:
+# -------------------
+# /auth command
+# -------------------
+@app.on_message(filters.command("auth") & filters.group & admin_only())
+async def auth_cmd(client, message: Message):
+    if message.reply_to_message:
         user_id = message.reply_to_message.from_user.id
-
-    # Case 2: argument (user_id or @username)
-    elif len(message.command) > 1:
-        arg = message.command[1]
-        if arg.isdigit():
-            user_id = int(arg)
-        else:
-            try:
-                user = await client.get_users(arg)
-                user_id = user.id
-            except Exception:
-                await message.reply_text("⚠️ Invalid username or ID.")
-                return
+    elif message.entities:
+        # Check if user mentioned
+        user_id = None
+        for ent in message.entities:
+            if ent.type == "text_mention":
+                user_id = ent.user.id
+                break
+    else:
+        await message.reply("⚠️ Reply to a user's message or mention the user to authorize them.")
+        return
 
     if not user_id:
-        await message.reply_text("⚠️ Reply to a user or provide @username/userid.")
+        await message.reply("⚠️ Could not find the user.")
         return
 
-    if await add_auth_user(message.chat.id, user_id):
-        await message.reply_text(f"✅ Authorized user `{user_id}` in this group")
-    else:
-        await message.reply_text(f"⚠️ User `{user_id}` is already authorized here.")
+    await add_auth_user(message.chat.id, user_id)
+    await message.reply(f"✅ User `{user_id}` is now authorized in this group.")
 
-
-# -----------------------------
-# /unauth → remove an authorized user
-# -----------------------------
-@app.on_message(filters.command("unauth") & filters.group & filters.admins)
-async def unauthorize_user(client, message):
-    user_id = None
-
-    # Case 1: reply to user
-    if message.reply_to_message and message.reply_to_message.from_user:
+# -------------------
+# /unauth command
+# -------------------
+@app.on_message(filters.command("unauth") & filters.group & admin_only())
+async def unauth_cmd(client, message: Message):
+    if message.reply_to_message:
         user_id = message.reply_to_message.from_user.id
-
-    # Case 2: argument (user_id or @username)
-    elif len(message.command) > 1:
-        arg = message.command[1]
-        if arg.isdigit():
-            user_id = int(arg)
-        else:
-            try:
-                user = await client.get_users(arg)
-                user_id = user.id
-            except Exception:
-                await message.reply_text("⚠️ Invalid username or ID.")
-                return
+    elif message.entities:
+        user_id = None
+        for ent in message.entities:
+            if ent.type == "text_mention":
+                user_id = ent.user.id
+                break
+    else:
+        await message.reply("⚠️ Reply to a user's message or mention the user to remove authorization.")
+        return
 
     if not user_id:
-        await message.reply_text("⚠️ Reply to a user or provide @username/userid.")
+        await message.reply("⚠️ Could not find the user.")
         return
 
-    if await remove_auth_user(message.chat.id, user_id):
-        await message.reply_text(f"🗑️ Removed `{user_id}` from authorized users in this group")
-    else:
-        await message.reply_text(f"⚠️ User `{user_id}` is not authorized in this group.")
+    await remove_auth_user(message.chat.id, user_id)
+    await message.reply(f"❌ User `{user_id}` is no longer authorized in this group.")
 
-
-# -----------------------------
-# /authusers → list all authorized users
-# -----------------------------
-@app.on_message(filters.command("authusers") & filters.group & filters.admins)
-async def list_auth_users(client, message):
-    users = await get_auth_users(message.chat.id)
-
-    if not users:
-        await message.reply_text("⚠️ No authorized users in this group.")
+# -------------------
+# /authusers command
+# -------------------
+@app.on_message(filters.command("authusers") & filters.group & admin_only())
+async def authusers_cmd(client, message: Message):
+    auth_list = await get_auth_users(message.chat.id)
+    if not auth_list:
+        await message.reply("⚠️ No authorized users in this group yet.")
         return
 
-    text = "👑 **Authorized Users in this Group:**\n\n"
-    for uid in users:
-        try:
-            user = await client.get_users(uid)
-            mention = user.mention if user else f"`{uid}`"
-            text += f"• {mention} (`{uid}`)\n"
-        except Exception:
-            text += f"• `{uid}` (not found)\n"
-
-    await message.reply_text(text)
+    text = "✅ Authorized Users:\n\n" + "\n".join([f"- `{uid}`" for uid in auth_list])
+    await message.reply(text)
