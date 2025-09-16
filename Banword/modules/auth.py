@@ -1,25 +1,23 @@
+# modules/auth.py
+
 from pyrogram import filters
 from Banword import app
 from config import OWNER_ID
-from helper.auth import add_authorized_user
-from helper.auth import get_authorized_users
+from helper.authdb import add_auth_user, is_authorized, get_auth_users
 
 @app.on_message(filters.command("auth") & filters.user(OWNER_ID))
 async def authorize_user(client, message):
     user_id = None
 
-    # Case 1: reply to a user's message
+    # Case 1: reply
     if message.reply_to_message and message.reply_to_message.from_user:
         user_id = message.reply_to_message.from_user.id
 
-    # Case 2: pass a username or ID in the command
+    # Case 2: argument
     elif len(message.command) > 1:
         arg = message.command[1]
-
-        # If it's numeric, assume user ID
         if arg.isdigit():
             user_id = int(arg)
-        # If it's username, try to resolve
         else:
             try:
                 user = await client.get_users(arg)
@@ -28,31 +26,29 @@ async def authorize_user(client, message):
                 await message.reply_text("⚠️ Invalid username or ID.")
                 return
 
-    # If still no user found
     if not user_id:
-        await message.reply_text("⚠️ Reply to a user or provide their @username/userid.")
+        await message.reply_text("⚠️ Reply to a user or provide @username/userid.")
         return
 
-    # Add user to auth list
-    if add_authorized_user(user_id):
-        await message.reply_text(f"✅ Authorized user `{user_id}`")
+    if await add_auth_user(message.chat.id, user_id):
+        await message.reply_text(f"✅ Authorized user `{user_id}` in this group")
     else:
-        await message.reply_text(f"⚠️ User `{user_id}` is already authorized.")
+        await message.reply_text(f"⚠️ User `{user_id}` is already authorized here.")
+        
 
-@app.on_message(filters.command("authusers") & filters.user(OWNER_ID))
-async def list_authorized_users(client, message):
-    users = get_authorized_users()
+@app.on_message(filters.command("authusers") & filters.group)
+async def list_auth_users(client, message):
+    users = await get_auth_users(message.chat.id)
 
     if not users:
-        await message.reply_text("⚠️ No authorized users yet.")
+        await message.reply_text("⚠️ No authorized users in this group.")
         return
 
-    text = "**Authorized Users:**\n\n"
+    text = "👑 **Authorized Users in this Group:**\n\n"
     for uid in users:
         try:
             user = await client.get_users(uid)
-            name = f"{user.first_name or ''} {user.last_name or ''}".strip()
-            mention = user.mention if user else str(uid)
+            mention = user.mention if user else f"`{uid}`"
             text += f"• {mention} (`{uid}`)\n"
         except Exception:
             text += f"• `{uid}` (not found)\n"
