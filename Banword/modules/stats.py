@@ -1,7 +1,7 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
-from Banword import Banword as app
+from Banword import app
 from Banword.helper.database import get_users, get_chats, get_new_users, get_new_chats
 
 
