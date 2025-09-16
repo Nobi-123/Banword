@@ -2,7 +2,7 @@ import asyncio
 from config import OWNER_ID
 from pyrogram import *
 from pyrogram.types import *
-from Banword import Banword as app
+from Banword import app
 from Banword.helper.database import get_users, get_chats
 
 async def send_msg(user_id, message):
