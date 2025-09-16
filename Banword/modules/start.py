@@ -2,7 +2,7 @@ from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, CallbackQuery
 from pyrogram.enums import ChatType
 from config import OWNER_ID, BOT_USERNAME
-from Banword import Banword as app
+from Banword import app
 from Banword.helper.database import add_user, add_chat
 
 START_IMG = "https://files.catbox.moe/ctmhp9.jpg"
