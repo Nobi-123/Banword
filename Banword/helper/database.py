@@ -3,9 +3,10 @@ from config import MONGO_URL
 from motor.motor_asyncio import AsyncIOMotorClient as MongoCli
 
 mongo = MongoCli(MONGO_URL)
+db = mongo["banword_bot"]  
 
-users_collection = mongo.users.users
-chats_collection = mongo.chats.chatsdb
+users_collection = db.users
+chats_collection = db.chats
 
 # USERS FUNCTIONS
 async def get_users():
