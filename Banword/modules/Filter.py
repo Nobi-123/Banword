@@ -5,7 +5,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from Banword import Banword as app
 from config import OTHER_LOGS, BOT_USERNAME
 
-# Import auth DB
+# Import auth functions
 from Banword.helper.authdb import is_auth_user
 
 # List of 18+ or abusive words (expandable)
@@ -39,7 +39,7 @@ async def filter_18(client: Client, message: Message):
     if not BAD_PATTERN.search(text):
         return
 
-    # ✅ Skip if user is in auth list for this group
+    # ✅ Skip if user is authorized in this group
     if await is_auth_user(message.chat.id, user.id):
         return
 
@@ -47,7 +47,7 @@ async def filter_18(client: Client, message: Message):
     try:
         await message.delete()
     except:
-        return
+        pass
 
     # Send warning in group
     mention = f"[{user.first_name}](tg://user?id={user.id})"
