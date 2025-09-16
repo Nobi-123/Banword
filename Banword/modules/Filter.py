@@ -14,7 +14,8 @@ BAD_WORDS = [
     "chutiya", "madarchod", "bhenchod", "gaand", "gand", "lund", "ch**d", "g***i", "harami", "kutte", "kutta",
     "gandu", "madharchod", "lundoo", "lodu", "bhains", "chod", "randi", "randa", "haramzada", "randi ka bacha",
     "bhosdiwala", "bhosdike", "mc", "mcchod", "randi ki aulaad", "gand mara", "lund mar", "lauda", "loda",
-    "chodu", "chut", "chutiyapa", "chutiye", "chut ke", "chut ke laude", "chut ke bache", "bhosadike",
+    "chodu", "chut", "chutiyapa", "chutiye", "chut ke", "chut ke laude", "chut ke bache", "bhosadike", "bsdk", "allen", "oswaal", 
+    "t.me/", "https://t.me/", "www", "bkl"
     
     # Slang variations with stars (to catch censored forms)
     "ch**d", "g***i", "m**ch*d", "b**chod", "b***chod"
@@ -40,7 +41,7 @@ async def filter_18(client: Client, message: Message):
 
     # Send warning in group
     mention = f"[{user.first_name}](tg://user?id={user.id})"
-    warn_text = f"{mention}, 18+ messages are not allowed!"
+    warn_text = f"{mention}, Abusive messages are not allowed!"
     cancel_btn = InlineKeyboardMarkup([[InlineKeyboardButton("Cancel", callback_data="close")]])
 
     try:
