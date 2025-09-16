@@ -5,35 +5,45 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from Banword import Banword as app
 from config import OTHER_LOGS, BOT_USERNAME
 
+# Import auth DB
+from Banword.helper.authdb import is_auth_user
+
 # List of 18+ or abusive words (expandable)
 BAD_WORDS = [
     # 18+ related words
-    "18+", "sex", "porn", "nude", "blowjob", "boobs", "bobs", "condom", "xxx", "adult", "nangi", "randi", 
+    "18+", "sex", "porn", "nude", "blowjob", "boobs", "bobs", "condom", "xxx", "adult", "nangi", "randi",
 
     # Common gaaliyan & offensive words (Hindi/English)
     "chutiya", "madarchod", "bhenchod", "gaand", "gand", "lund", "ch**d", "g***i", "harami", "kutte", "kutta",
     "gandu", "madharchod", "lundoo", "lodu", "bhains", "chod", "randi", "randa", "haramzada", "randi ka bacha",
     "bhosdiwala", "bhosdike", "mc", "mcchod", "randi ki aulaad", "gand mara", "lund mar", "lauda", "loda",
-    "chodu", "chut", "chutiyapa", "chutiye", "chut ke", "chut ke laude", "chut ke bache", "bhosadike", "bsdk", "allen", "oswaal", 
-    "t.me/", "https://t.me/", "www", "bkl"
-    
+    "chodu", "chut", "chutiyapa", "chutiye", "chut ke", "chut ke laude", "chut ke bache", "bhosadike", "bsdk", "allen", "oswaal",
+    "t.me/", "https://t.me/", "www", "bkl",
+
     # Slang variations with stars (to catch censored forms)
     "ch**d", "g***i", "m**ch*d", "b**chod", "b***chod"
 ]
 
 BAD_PATTERN = re.compile(r"|".join([re.escape(word) for word in BAD_WORDS]), re.IGNORECASE)
 
+
 @app.on_message(filters.group & filters.text & ~filters.via_bot)
 async def filter_18(client: Client, message: Message):
     text = message.text or ""
-
-    if not BAD_PATTERN.search(text):
-        return
-
     user = message.from_user
+
     if not user:
         return
 
+    # Skip if no bad words
+    if not BAD_PATTERN.search(text):
+        return
+
+    # ✅ Skip if user is in auth list for this group
+    if await is_auth_user(message.chat.id, user.id):
+        return
+
+    # Delete message
     try:
         await message.delete()
     except:
@@ -79,6 +89,7 @@ async def filter_18(client: Client, message: Message):
         )
     except Exception as e:
         print(f"[LOG SEND ERROR] {e}")
+
 
 # Optional: Handle cancel button
 @app.on_callback_query(filters.regex("close"))
