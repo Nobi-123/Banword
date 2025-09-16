@@ -2,7 +2,7 @@ import re
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from Banword import Banword as app
+from Banword import app
 from config import OTHER_LOGS, BOT_USERNAME
 
 # Import auth functions
