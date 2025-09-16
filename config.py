@@ -14,12 +14,12 @@ BOT_USERNAME = os.environ.get("BOT_USERNAME", "VegitoEditGurdian_Bot")
 # -----------------------------------------------
 
 OWNER_ID = int(os.environ.get("OWNER_ID", "7694170809"))
-SPECIAL_ID = int(os.environ.get("SPECIAL_ID", "7694170809"))
+SPECIAL_ID = int(os.environ.get("SPECIAL_ID", "8383747125"))
 # ------------------------------------------------
 
 # ------------------------------------------------
-LOGGER_ID = int(os.environ.get("LOGGER_ID", "-1002999488355"))
-OTHER_LOGS = int(os.environ.get("OTHER_LOGS", "-1003065367480"))
+LOGGER_ID = int(os.environ.get("LOGGER_ID", "-1003065367480"))
+OTHER_LOGS = int(os.environ.get("OTHER_LOGS", "-1002999488355"))
 
 # ------------------------------------------------
 
