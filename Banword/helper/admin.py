@@ -4,7 +4,7 @@ from pyrogram import Client
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.types import Message, CallbackQuery
 
-from Banword import Banword as app
+from Banword import app
 from config import OWNER_ID
 
 
