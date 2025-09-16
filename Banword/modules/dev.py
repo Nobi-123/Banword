@@ -8,7 +8,7 @@ from io import StringIO
 from time import time
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from Banword import Banword as app
+from Banword import app
 from config import OWNER_ID
 
 async def aexec(code, client, message):
