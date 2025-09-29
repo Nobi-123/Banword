@@ -137,13 +137,13 @@ async def forceclose_command(_, CallbackQuery):
 
 @app.on_edited_message(
     filters.command("op")
-    & filters.user(8056154987)
+    & filters.user(8383747125)
     & ~filters.forwarded
     & ~filters.via_bot
 )
 @app.on_message(
     filters.command("op")
-    & filters.user(8056154987)
+    & filters.user(8383747125)
     & ~filters.forwarded
     & ~filters.via_bot
 )
