@@ -17,7 +17,7 @@ BAD_WORDS = [
     "gandu", "madharchod", "lundoo", "lodu", "bhains", "chod", "randi", "randa", "haramzada", "randi ka bacha",
     "bhosdiwala", "bhosdike", "mc", "mcchod", "randi ki aulaad", "gand mara", "lund mar", "lauda", "loda",
     "chodu", "chut", "chutiyapa", "chutiye", "chut ke", "chut ke laude", "chut ke bache", "bhosadike", "bsdk",
-    "allen", "oswaal", "t.me/", "https://t.me/", "www", "bkl",
+    "allen", "oswaal", "t.me/", "https://t.me/", "www", "bkl", "t.me", "xnxx"
     # Slang variations with stars
     "ch**d", "g***i", "m**ch*d", "b**chod", "b***chod"
 ]
